@@ -1,38 +1,40 @@
-import { Alert, FormControl, Row } from "react-bootstrap";
+import { Row, Col, FormControl, Alert } from "react-bootstrap";
 import SingleBook from "./SingleBook";
-import { Component } from "react";
+import { useState } from "react";
 
-class BookList extends Component {
-  state = {
-    searchQuery: ""
-  };
+const BookList = ({ books, selectedAsin, onSelectBook }) => {
+  const [searchQuery, setSearchQuery] = useState("");
 
-  render() {
-    const { books } = this.props;
-    console.log("BOOKLIST RENDER");
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    const filteredBooks = books.filter(book => book.title.toLowerCase().includes(this.state.searchQuery.toLowerCase()));
-    return (
-      <>
-        <FormControl
-          type="text"
-          placeholder="Cerca un libro"
-          className="mb-3"
-          value={this.state.searchQuery}
-          onChange={e => this.setState({ searchQuery: e.target.value })}
-        />
-        <Row className="g-2">
-          {filteredBooks.length > 0 ? (
-            filteredBooks.map(book => {
-              return <SingleBook book={book} key={book.asin} />;
-            })
-          ) : (
-            <Alert variant="warning">Nessun libro trovato</Alert>
-          )}
-        </Row>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <FormControl
+        type="text"
+        placeholder="Cerca un libro"
+        className="mb-3"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
+      <Row className="g-2">
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => (
+            <SingleBook
+              key={book.asin}
+              book={book}
+              isSelected={selectedAsin === book.asin}
+              onSelectBook={onSelectBook}
+            />
+          ))
+        ) : (
+          <Alert variant="warning">Ops! Nessun libro trovato</Alert>
+        )}
+      </Row>
+    </>
+  );
+};
 
 export default BookList;

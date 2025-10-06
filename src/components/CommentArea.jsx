@@ -4,46 +4,53 @@ import AddComment from "./AddComment";
 import Loading from "./Loading";
 import Error from "./Error";
 
-
 const CommentArea = ({ asin }) => {
-  const [comments, setComments] = useState([]); // salva i commenti del libro
-  const [loading, setLoading] = useState(false); // stato per mostrare lo spinner
-  const [error, setError] = useState(false); // stato per mostrare il messaggio di errore
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-
-  const fetchComments = async () => {   // Funzione per caricare i commenti dal server
+  const fetchComments = async () => {
+    if (!asin) return; // Non fa la fetch se asin non esiste
     try {
-      setLoading(true); // inizio caricamento
-      setError(false);  // reset dell'errore precedente
+      setLoading(true);
+      setError(false);
+
       const res = await fetch(
         `https://striveschool-api.herokuapp.com/api/comments/${asin}`,
         {
           headers: {
-            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRlODlhNDk2MDFiZjAwMTViNGE3NTUiLCJpYXQiOjE3NTk0MTQ2OTMsImV4cCI6MTc2MDYyNDI5M30.CPbpKiUsRqKOpVFhfm4EWWUqUI1X8LjGyFqSnmOME_o",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRlODlhNDk2MDFiZjAwMTViNGE3NTUiLCJpYXQiOjE3NTk3NTczNzgsImV4cCI6MTc2MDk2Njk3OH0.pa92VpPqyb0WkDJqKbWSZ_VvJoRxbAaBta15ylkFijY",
           },
         }
       );
-      if (!res.ok) throw new Error("Errore nella fetch"); // se la fetch fallisce
+
+      if (!res.ok) throw new Error("Errore nella fetch");
+
       const data = await res.json();
-      setComments(data); // salvo i commenti nello stato
+      setComments(Array.isArray(data) ? data : []); // Evita errori se l'API ritorna qualcosa che non ci si aspettava
     } catch {
-      setError(true); // se c'è un errore, mostro il messaggio
+      setError(true);
     } finally {
-      setLoading(false); // stoppo lo spinner
+      setLoading(false);
     }
   };
 
-  
-  useEffect(() => { //serve a caricare i commenti ogni volta che cambio libro
-    fetchComments();
+  // Aggiorna i commenti solo se asin è valido
+  useEffect(() => {
+    if (asin) fetchComments();
   }, [asin]);
+
+  if (!asin) {
+    return <div className="alert alert-info">Seleziona un libro per leggerne i commenti</div>;
+  }
 
   return (
     <div className="mt-2">
-      {loading && <Loading />}  {/* fa vedere lo spinner se loading è true */}
-      {error && <Error />}      {/* fa vedere il messaggio di errore se error è true */}
-      <Comments comments={comments} onDelete={fetchComments} /> {/* lista dei commenti */}
-      <AddComment asin={asin} onNewComment={fetchComments} /> {/* form per aggiungere un commento */}
+      {loading && <Loading />}
+      {error && <Error />}
+      <Comments comments={comments} onDelete={fetchComments} />
+      <AddComment asin={asin} onNewComment={fetchComments} />
     </div>
   );
 };

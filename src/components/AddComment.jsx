@@ -18,7 +18,7 @@ const AddComment = ({ asin, onNewComment }) => { // Form per aggiungere un nuovo
         }),
         headers: {
           "Content-Type": "application/json",
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRlODlhNDk2MDFiZjAwMTViNGE3NTUiLCJpYXQiOjE3NTk0MTQ2OTMsImV4cCI6MTc2MDYyNDI5M30.CPbpKiUsRqKOpVFhfm4EWWUqUI1X8LjGyFqSnmOME_o",
+          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRlODlhNDk2MDFiZjAwMTViNGE3NTUiLCJpYXQiOjE3NTk3NTczNzgsImV4cCI6MTc2MDk2Njk3OH0.pa92VpPqyb0WkDJqKbWSZ_VvJoRxbAaBta15ylkFijY",
         },
       });
       setText("");   // reset del campo di testo
